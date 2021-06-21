@@ -5,11 +5,16 @@ ui <- fluidPage(
     sliderInput("mywidth", "width of the pencil", min=1,
                 max=30, step=1, value=10),
     actionButton("reset", "reset"),
+
     plotOutput("plot", width = "500px", height = "500px",
                hover=hoverOpts(id = "hover", delay = 100,
                                delayType = "throttle", clip = TRUE,
                                nullOutside = TRUE),
-               click="click"))
+               click="click"),
+    actionButton('predict', 'predict')
+    )
+
+
 
 server <- function(input, output, session) {
     vals = reactiveValues(x=NULL, y=NULL)
@@ -32,9 +37,44 @@ server <- function(input, output, session) {
         plot(x=vals$x, y=vals$y,
              xlim=c(0, 28),
              ylim=c(0, 28),
-             ylab="y",
-             xlab="x",
+             ylab="",
+             xlab="",
              type="l",
-             lwd=input$mywidth)
-    })}
+             lwd=input$mywidth,
+             axes=FALSE,
+             frame.plot=TRUE)
+    })
+
+
+    observeEvent(input$predict, {
+
+        outfile <- './www/plot1.png'
+
+        png(outfile, width = 280, height = 280)
+
+        plot(x=vals$x, y=vals$y,
+             xlim=c(0, 28),
+             ylim=c(0, 28),
+             ylab="",
+             xlab="",
+             type="l",
+             lwd=input$mywidth,
+             axes=FALSE,
+             frame.plot=FALSE)
+        dev.off()
+
+
+        # Return a list containing the filename
+        list(src = outfile,
+             contentType = 'image/png',
+             width = 280,
+             height = 280)
+
+    })
+
+    }
+
+
+
+
 shinyApp(ui, server)
