@@ -50,7 +50,7 @@ server <- function(input, output, session) {
 
         outfile <- './www/plot1.png'
 
-        png(outfile, width = 280, height = 280)
+        png(outfile, width = 1000, height = 1000)
 
         plot(x=vals$x, y=vals$y,
              xlim=c(0, 28),
@@ -67,8 +67,8 @@ server <- function(input, output, session) {
         # Return a list containing the filename
         list(src = outfile,
              contentType = 'image/png',
-             width = 280,
-             height = 280)
+             width = 1000,
+             height = 1000)
 
     })
 
