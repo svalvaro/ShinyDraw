@@ -6,7 +6,7 @@ ui <- fluidPage(
                 max=30, step=1, value=10),
     actionButton("reset", "reset"),
 
-    plotOutput("plot", width = "500px", height = "500px",
+    plotOutput("plot", width = "280px", height = "280px",
                hover=hoverOpts(id = "hover", delay = 100,
                                delayType = "throttle", clip = TRUE,
                                nullOutside = TRUE),
@@ -48,9 +48,9 @@ server <- function(input, output, session) {
 
     observeEvent(input$predict, {
 
-        outfile <- './www/plot1.png'
+        outfile <- './www/plot2.png'
 
-        png(outfile, width = 1000, height = 1000)
+        png(outfile, width = 280, height = 280)
 
         plot(x=vals$x, y=vals$y,
              xlim=c(0, 28),
@@ -67,8 +67,8 @@ server <- function(input, output, session) {
         # Return a list containing the filename
         list(src = outfile,
              contentType = 'image/png',
-             width = 1000,
-             height = 1000)
+             width = 28,
+             height = 28)
 
     })
 
