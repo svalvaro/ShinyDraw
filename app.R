@@ -4,17 +4,20 @@ library(reticulate)
 ui <- fluidPage(
     h4("Click on plot to start drawing, click again to pause"),
     sliderInput("mywidth", "width of the pencil", min=1,
-                max=30, step=1, value=22),
+                max= 50, step=1, value=22),
     actionButton("reset", "reset"),
 
-    plotOutput("plot", width = "280px", height = "280px",
+    plotOutput("plot", width = "500px", height = "500px",
                hover=hoverOpts(id = "hover", delay = 100,
                                delayType = "throttle", clip = TRUE,
                                nullOutside = TRUE),
                click="click"),
     actionButton('predict', 'predict'),
 
-    verbatimTextOutput("prediction")
+    verbatimTextOutput("prediction"),
+
+    br(),
+    verbatimTextOutput('combined')
     )
 
 
@@ -117,10 +120,22 @@ server <- function(input, output, session) {
 
 
 
+
+    # Combine multiple positive prediction, don't store when reset is pressed.
+
+
+
     combined <- reactive({
 
-        string <- paste0('', a$result)
+        string <- cat(prediction())
+
+        return(string)
     })
+
+
+
+
+    output$combined <- renderText(combined())
 
     # Remove plots after finishings.
 
