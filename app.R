@@ -36,6 +36,7 @@ server <- function(input, output, session) {
             vals$x <- c(vals$x, input$hover$x)
             vals$y <- c(vals$y, input$hover$y)
         }})
+
     output$plot= renderPlot({
         plot(x=vals$x, y=vals$y,
              xlim=c(0, 28),
@@ -48,6 +49,7 @@ server <- function(input, output, session) {
              frame.plot=TRUE)
     })
 
+    number_plots <- reactiveValues(Plots = 0)
 
     observeEvent(input$predict, {
 
@@ -73,7 +75,23 @@ server <- function(input, output, session) {
              width = 28,
              height = 28)
 
+        number_plots$Plots    <-length(list.files('../ShinyDraw/www/pictures_to_predict/'))
+
     })
+
+
+
+
+    # number_plots <- reactive({
+    #
+    #
+    # })
+
+#
+#     observeEvent(input$predict, {
+#         number_plots$Plots    <-length(list.files('../ShinyDraw/www/pictures_to_predict/'))
+#     })
+
 
 
 
@@ -81,19 +99,30 @@ server <- function(input, output, session) {
 
         input$predict
 
-        a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+        if(number_plots$Plots == 0){
 
-        if (is.null(a$result)) {
-            return(NULL)
-        }else{
-            a$result
+            return(paste0('nothing to predict', number_plots$Plots))
+
+        } else if(number_plots$Plots > 0 ){
+
+
+
+            a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+            cat(a$result)
+
+            return(a$result)
         }
 
 
-
-
-
     })
+
+    # Remove plots after finishings.
+
+    session$onSessionEnded(function() {
+        cat("Session Ended\n")
+        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+    })
+
 
 }
 
