@@ -12,7 +12,9 @@ ui <- fluidPage(
                                delayType = "throttle", clip = TRUE,
                                nullOutside = TRUE),
                click="click"),
-    actionButton('predict', 'predict')
+    actionButton('predict', 'predict'),
+
+    verbatimTextOutput("prediction")
     )
 
 
@@ -75,12 +77,25 @@ server <- function(input, output, session) {
 
 
 
+    output$prediction <- renderText({
 
-    reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+        input$predict
 
-    }
+        a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+
+        if (is.null(a$result)) {
+            return(NULL)
+        }else{
+            a$result
+        }
 
 
+
+
+
+    })
+
+}
 
 
 shinyApp(ui, server)

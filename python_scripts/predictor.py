@@ -21,18 +21,28 @@ import os
 from PIL import Image
 import matplotlib.pyplot as plt
 import PIL.ImageOps
+import warnings
+import logging 
+
+
+# Supress messages
+
+warnings.filterwarnings('ignore')
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 
 # Import the model
 
-model = load_model('./saved_model/')
-
+model = load_model('../ShinyDraw/python_scripts/saved_model/')
+    
 
 # Load the images created from the shiny app
 
 imageList = []
 
-path = '../www/pictures_to_predict/'
+path = '../ShinyDraw/www/pictures_to_predict/'
 
 size = 28,28
 
@@ -72,4 +82,4 @@ output_labels = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P'
 
 result = [output_labels[i] for i in classes]
 
-print(result)
+
