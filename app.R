@@ -7,7 +7,8 @@ ui <- fluidPage(
                 max= 50, step=1, value=22),
 
     selectInput(inputId = 'model_select', 'Select a Neural Network',
-                choices = c('Adam' = 'Adam', 'rmsprop' = 'rmsprop'),
+                choices = c('Adam' = 'Adam', 'RMSprop' = 'rmsprop',
+                            'Dropout' = 'dropout'),
                 selected = 'Adam'
                 ),
     actionButton("reset", "reset"),
@@ -108,6 +109,8 @@ server <- function(input, output, session) {
             } else if(input$model_select == 'rmsprop'){
 
                 python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_rmsprop.py', )
+            } else if (input$model_select == 'dropout'){
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_dropout.py', )
             }
 
             message(paste0('Predicted: ', python_output$result))

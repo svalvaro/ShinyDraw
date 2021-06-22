@@ -22,7 +22,7 @@ logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 # Import the trained model
 
-model = load_model('../ShinyDraw/python_scripts/model_rmsprop//')
+model = load_model('../ShinyDraw/python_scripts/model_rmsprop/')
     
 
 # Load the images created from the shiny app and 
