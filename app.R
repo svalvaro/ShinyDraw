@@ -48,7 +48,7 @@ server <- function(input, output, session) {
 
     observeEvent(input$predict, {
 
-        outfile <- './www/plot2.png'
+        outfile <- './www/pictures_to_predict/plot4.png'
 
         png(outfile, width = 280, height = 280)
 
