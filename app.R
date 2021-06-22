@@ -49,7 +49,7 @@ server <- function(input, output, session) {
              frame.plot=TRUE)
     })
 
-    number_plots <- reactiveValues(Plots = 0)
+    number_plots <- reactiveValues(Plots = length(list.files('../ShinyDraw/www/pictures_to_predict/')))
 
     observeEvent(input$predict, {
 
@@ -75,45 +75,51 @@ server <- function(input, output, session) {
              width = 28,
              height = 28)
 
-        number_plots$Plots    <-length(list.files('../ShinyDraw/www/pictures_to_predict/'))
+        number_plots$Plots    <- length(list.files('../ShinyDraw/www/pictures_to_predict/'))
+
+
 
     })
 
 
+    prediction <- reactive({
+
+        input$predict
 
 
-    # number_plots <- reactive({
-    #
-    #
-    # })
+        if (number_plots$Plots == 0) {
+            return(NULL)
+        } else{
+            a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+            message(paste0('Predicted: ', a$result))
+            return(a$result)
 
-#
-#     observeEvent(input$predict, {
-#         number_plots$Plots    <-length(list.files('../ShinyDraw/www/pictures_to_predict/'))
-#     })
+        }
 
-
+    })
 
 
     output$prediction <- renderText({
 
-        input$predict
+        if(is.null(prediction())){
 
-        if(number_plots$Plots == 0){
+            message('no plots')
 
-            return(paste0('nothing to predict', number_plots$Plots))
+            return('There is nothing to predict.')
 
-        } else if(number_plots$Plots > 0 ){
+        } else {
 
 
+            return(prediction())
 
-            a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
-            cat(a$result)
-
-            return(a$result)
         }
+    })
 
 
+
+    combined <- reactive({
+
+        string <- paste0('', a$result)
     })
 
     # Remove plots after finishings.

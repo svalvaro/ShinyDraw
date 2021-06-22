@@ -1,20 +1,7 @@
-#import pandas as pd
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Flatten
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Sequential, save_model, load_model
-from keras.layers.convolutional import Conv2D
-from keras.layers.convolutional import MaxPooling2D
-from keras import backend as K
-from keras.utils import np_utils
-#from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import load_model
 import numpy as np
-#import matplotlib.pyplot as plt
-#import seaborn as sns
+import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.applications.imagenet_utils import decode_predictions
 from keras.preprocessing import image
 import image
 import os
@@ -33,12 +20,13 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 
-# Import the model
+# Import the trained model
 
 model = load_model('../ShinyDraw/python_scripts/saved_model/')
     
 
-# Load the images created from the shiny app
+# Load the images created from the shiny app and 
+# transform them into grey and 28 x 28 pixels
 
 imageList = []
 
@@ -65,6 +53,7 @@ for file in os.listdir(path):
     imageList.append(img)
 
 
+# put the samples into an array
 
 samples_to_predict = np.array(imageList)
 
@@ -81,5 +70,3 @@ output_labels = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P'
 
 
 result = [output_labels[i] for i in classes]
-
-
