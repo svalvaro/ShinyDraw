@@ -64,6 +64,8 @@ samples_to_predict = np.array(imageList)
 
 predictions = model.predict(samples_to_predict)
 
+confidence = np.max(predictions, axis =1)
+
 classes = np.argmax(predictions, axis = 1)
 
 output_labels = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']

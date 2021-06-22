@@ -5,6 +5,11 @@ ui <- fluidPage(
     h4("Click on plot to start drawing, click again to pause"),
     sliderInput("mywidth", "width of the pencil", min=1,
                 max= 50, step=1, value=22),
+
+    selectInput(inputId = 'model_select', 'Select a Neural Network',
+                choices = c('Adam' = 'Adam', 'rmsprop' = 'rmsprop'),
+                selected = 'Adam'
+                ),
     actionButton("reset", "reset"),
 
     plotOutput("plot", width = "500px", height = "500px",
@@ -93,9 +98,21 @@ server <- function(input, output, session) {
         if (number_plots$Plots == 0) {
             return(NULL)
         } else{
-            a <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
-            message(paste0('Predicted: ', a$result))
-            return(a$result)
+
+            #Select the neural network
+
+
+            if (input$model_select == 'Adam') {
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+
+            } else if(input$model_select == 'rmsprop'){
+
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_rmsprop.py', )
+            }
+
+            message(paste0('Predicted: ', python_output$result))
+
+            return(list(python_output$result, python_output$confidence))
 
         }
 
@@ -113,7 +130,9 @@ server <- function(input, output, session) {
         } else {
 
 
-            return(prediction())
+            return(paste0('Predicted: ', prediction()[1], ' confidence: ',
+                          format(round(as.numeric(prediction()[2])*100,1),nsmall = 1),
+                          ' %.'))
 
         }
     })
@@ -127,7 +146,7 @@ server <- function(input, output, session) {
 
     combined <- reactive({
 
-        string <- cat(prediction())
+        #string <- cat(prediction())
 
         return(string)
     })
