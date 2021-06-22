@@ -1,9 +1,10 @@
 library(shiny)
+library(reticulate)
 
 ui <- fluidPage(
     h4("Click on plot to start drawing, click again to pause"),
     sliderInput("mywidth", "width of the pencil", min=1,
-                max=30, step=1, value=10),
+                max=30, step=1, value=22),
     actionButton("reset", "reset"),
 
     plotOutput("plot", width = "280px", height = "280px",
@@ -48,7 +49,7 @@ server <- function(input, output, session) {
 
     observeEvent(input$predict, {
 
-        outfile <- './www/pictures_to_predict/plot4.png'
+        outfile <- './www/pictures_to_predict/plotw.png'
 
         png(outfile, width = 280, height = 280)
 
@@ -71,6 +72,11 @@ server <- function(input, output, session) {
              height = 28)
 
     })
+
+
+
+
+    reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
 
     }
 
