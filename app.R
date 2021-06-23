@@ -67,6 +67,7 @@ server <- function(input, output, session) {
         }})
 
     output$plot= renderPlot({
+
         plot(x=vals$x, y=vals$y,
              xlim=c(0, 28),
              ylim=c(0, 28),
@@ -78,11 +79,15 @@ server <- function(input, output, session) {
              frame.plot=TRUE)
     })
 
+
+
     number_plots <- reactiveValues(Plots = length(list.files('../ShinyDraw/www/pictures_to_predict/')))
+
 
     observeEvent(input$predict, {
 
         outfile <- './www/pictures_to_predict/plotw.png'
+        #outfile <- tempfile(fileext = 'to_predict_plot.png')
 
         png(outfile, width = 280, height = 280)
 
@@ -183,12 +188,18 @@ server <- function(input, output, session) {
         df <- prediction()[[2]]
 
 
-        ggplot(df, aes(Letter, as.numeric(Confidence)))+
+        p <- ggplot(df, aes(Letter, as.numeric(Confidence)))+
             geom_col()+
             coord_flip()+
             theme_bw()+
             ylab('Confidence (%)')+
             xlab('')
+
+        if (!is.null(prediction())) {
+            return(p)
+        }else{
+            NULL
+        }
     })
 
 
@@ -196,7 +207,7 @@ server <- function(input, output, session) {
 
     session$onSessionEnded(function() {
         cat("Session Ended\n")
-        #unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
     })
 
 
