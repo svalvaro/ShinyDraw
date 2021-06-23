@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import PIL.ImageOps
 import warnings
 import logging 
+import pandas as pd
 
 
 # Supress messages
@@ -22,7 +23,7 @@ logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
 # Import the trained model
 
-model = load_model('../ShinyDraw/python_scripts/saved_model/')
+model = load_model('../ShinyDraw/python_scripts/model_adam//')
     
 
 # Load the images created from the shiny app and 
@@ -69,6 +70,9 @@ confidence = np.max(predictions, axis =1)
 classes = np.argmax(predictions, axis = 1)
 
 output_labels = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
+table_confidence = pd.DataFrame(np.array(predictions)[0],np.array(output_labels))
+
 
 
 result = [output_labels[i] for i in classes]

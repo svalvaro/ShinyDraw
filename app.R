@@ -1,5 +1,6 @@
 library(shiny)
 library(reticulate)
+library(ggplot2)
 
 ui <- fluidPage(
     h4("Click on plot to start drawing, click again to pause"),
@@ -23,7 +24,9 @@ ui <- fluidPage(
     verbatimTextOutput("prediction"),
 
     br(),
-    verbatimTextOutput('combined')
+
+    plotOutput('confidence_plot')
+    #verbatimTextOutput('combined')
     )
 
 
@@ -81,8 +84,8 @@ server <- function(input, output, session) {
         # Return a list containing the filename
         list(src = outfile,
              contentType = 'image/png',
-             width = 28,
-             height = 28)
+             width = 280,
+             height = 280)
 
         number_plots$Plots    <- length(list.files('../ShinyDraw/www/pictures_to_predict/'))
 
@@ -104,18 +107,36 @@ server <- function(input, output, session) {
 
 
             if (input$model_select == 'Adam') {
-                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor.py')
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_adam.py')
 
             } else if(input$model_select == 'rmsprop'){
 
-                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_rmsprop.py', )
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_rmsprop.py')
             } else if (input$model_select == 'dropout'){
-                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_dropout.py', )
+                python_output <- reticulate::py_run_file('../ShinyDraw/python_scripts/predictor_dropout.py')
             }
 
             message(paste0('Predicted: ', python_output$result))
 
-            return(list(python_output$result, python_output$confidence))
+            message(paste0('Confidence of the model: ', input$model_select, ' is ',python_output$confidence))
+
+
+            confidence_table <- as.data.frame(python_output$table_confidence)
+
+            confidence_table$Letter <- row.names(confidence_table)
+
+            row.names(confidence_table) <- NULL
+
+            colnames(confidence_table)[colnames(confidence_table) == "0"] <- "Confidence"
+
+
+            confidence_table$Confidence <- format(round(confidence_table$Confidence * 100,2), nsmall = 2)
+
+
+            results <- list(python_output$result,
+                            python_output$confidence,
+                            confidence_table)
+            return(results)
 
         }
 
@@ -131,8 +152,6 @@ server <- function(input, output, session) {
             return('There is nothing to predict.')
 
         } else {
-
-
             return(paste0('Predicted: ', prediction()[1], ' confidence: ',
                           format(round(as.numeric(prediction()[2])*100,1),nsmall = 1),
                           ' %.'))
@@ -141,29 +160,42 @@ server <- function(input, output, session) {
     })
 
 
+    output$confidence_plot <- renderPlot({
+
+        df <- prediction()[[3]]
+
+
+        ggplot(df, aes(Letter, as.numeric(Confidence)))+
+            geom_col()+
+            coord_flip()+
+            theme_bw()+
+            ylab('Confidence (%)')+
+            xlab('')
+
+
+    })
 
 
     # Combine multiple positive prediction, don't store when reset is pressed.
 
+#
+#     combined <- reactive({
+#
+#         #string <- cat(prediction())
+#
+#         return(string)
+#     })
 
 
-    combined <- reactive({
-
-        #string <- cat(prediction())
-
-        return(string)
-    })
 
 
-
-
-    output$combined <- renderText(combined())
+    #output$combined <- renderText(combined())
 
     # Remove plots after finishings.
 
     session$onSessionEnded(function() {
         cat("Session Ended\n")
-        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+        #unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
     })
 
 

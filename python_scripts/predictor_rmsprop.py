@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import PIL.ImageOps
 import warnings
 import logging 
+import pandas as pd
 
 
 # Supress messages
@@ -67,6 +68,8 @@ predictions = model.predict(samples_to_predict)
 classes = np.argmax(predictions, axis = 1)
 
 output_labels = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
+table_confidence = pd.DataFrame(np.array(predictions)[0],np.array(output_labels))
 
 
 result = [output_labels[i] for i in classes]
