@@ -1,35 +1,52 @@
 library(shiny)
 library(reticulate)
 library(ggplot2)
+library(shinydashboard)
 
-ui <- fluidPage(
-    h4("Click on plot to start drawing, click again to pause"),
-    sliderInput("mywidth", "width of the pencil", min=1,
-                max= 50, step=1, value=22),
+ui <- dashboardPage(
 
-    selectInput(inputId = 'model_select', 'Select a Neural Network',
-                choices = c('Adam' = 'Adam', 'RMSprop' = 'rmsprop',
-                            'Dropout' = 'dropout'),
-                selected = 'Adam'
-                ),
-    actionButton("reset", "reset"),
+    dashboardHeader(title = 'Shiny Draw & Predict'),
 
-    plotOutput("plot", width = "500px", height = "500px",
-               hover=hoverOpts(id = "hover", delay = 100,
-                               delayType = "throttle", clip = TRUE,
-                               nullOutside = TRUE),
-               click="click"),
-    actionButton('predict', 'predict'),
+    dashboardSidebar(sliderInput("mywidth", "width of the pencil", min=1,
+                                 max= 50, step=1, value=22),
 
-    verbatimTextOutput("prediction"),
+                     selectInput(inputId = 'model_select', 'Select a Neural Network',
+                                 choices = c('Adam' = 'Adam', 'RMSprop' = 'rmsprop',
+                                             'Dropout' = 'dropout'),
+                                 selected = 'Adam')
+                     ),
 
-    br(),
+    dashboardBody(h4("Click on plot to start drawing, click again to pause"),
 
-    plotOutput('confidence_plot')
-    #verbatimTextOutput('combined')
+                  fluidRow(
+                      column(4,
+                             actionButton("reset", "reset"),
+
+                             plotOutput("plot", width = "500px", height = "500px",
+                                        hover=hoverOpts(id = "hover", delay = 100,
+                                                        delayType = "throttle", clip = TRUE,
+                                                        nullOutside = TRUE),
+                                        click="click"),
+                             actionButton('predict', 'predict'),
+
+                             verbatimTextOutput("prediction")
+                             ),
+                      column(4,
+                             br(),
+                             br(),
+                             plotOutput('confidence_plot')
+                             )
+                  )
+
+
+
+
+
+
+                  #verbatimTextOutput('combined')
     )
 
-
+)
 
 server <- function(input, output, session) {
     vals = reactiveValues(x=NULL, y=NULL)
@@ -118,7 +135,7 @@ server <- function(input, output, session) {
 
             message(paste0('Predicted: ', python_output$result))
 
-            message(paste0('Confidence of the model: ', input$model_select, ' is ',python_output$confidence))
+
 
 
             confidence_table <- as.data.frame(python_output$table_confidence)
@@ -133,8 +150,9 @@ server <- function(input, output, session) {
             confidence_table$Confidence <- format(round(confidence_table$Confidence * 100,2), nsmall = 2)
 
 
+            message(paste0('Confidence of the model: ', input$model_select, ' is ',max(confidence_table$Confidence)))
+
             results <- list(python_output$result,
-                            python_output$confidence,
                             confidence_table)
             return(results)
 
@@ -153,16 +171,16 @@ server <- function(input, output, session) {
 
         } else {
             return(paste0('Predicted: ', prediction()[1], ' confidence: ',
-                          format(round(as.numeric(prediction()[2])*100,1),nsmall = 1),
+                          max(prediction()[[2]]$Confidence),
                           ' %.'))
 
         }
     })
 
 
-    output$confidence_plot <- renderPlot({
+    output$confidence_plot <- renderPlot(height = 500, width = 500, {
 
-        df <- prediction()[[3]]
+        df <- prediction()[[2]]
 
 
         ggplot(df, aes(Letter, as.numeric(Confidence)))+
@@ -195,7 +213,7 @@ server <- function(input, output, session) {
 
     session$onSessionEnded(function() {
         cat("Session Ended\n")
-        #unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
     })
 
 
