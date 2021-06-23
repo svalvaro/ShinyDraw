@@ -213,7 +213,7 @@ server <- function(input, output, session) {
 
     session$onSessionEnded(function() {
         cat("Session Ended\n")
-        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+        #unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
     })
 
 

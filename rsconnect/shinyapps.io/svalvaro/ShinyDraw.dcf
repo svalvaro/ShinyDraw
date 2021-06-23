@@ -1,0 +1,14 @@
+name: ShinyDraw
+title: ShinyDraw
+username:
+account: svalvaro
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4309478
+bundleId: 4746861
+url: https://svalvaro.shinyapps.io/ShinyDraw/
+when: 1624441223.48389
+lastSyncTime: 1624441223.48392
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/A_Z Handwritten Data.csv|www/ANN1.png|www/CNN2_dropout.png|www/CNN2_rmsprop.png|www/training.png
