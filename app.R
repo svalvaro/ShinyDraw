@@ -189,25 +189,8 @@ server <- function(input, output, session) {
             theme_bw()+
             ylab('Confidence (%)')+
             xlab('')
-
-
     })
 
-
-    # Combine multiple positive prediction, don't store when reset is pressed.
-
-#
-#     combined <- reactive({
-#
-#         #string <- cat(prediction())
-#
-#         return(string)
-#     })
-
-
-
-
-    #output$combined <- renderText(combined())
 
     # Remove plots after finishings.
 

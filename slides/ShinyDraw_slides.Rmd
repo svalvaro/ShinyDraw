@@ -109,6 +109,16 @@ knitr::include_graphics('images/CNN2_dropout.png')
 
 # Comparisons between models
 
+```{r training_results, echo=FALSE, out.width="100%"}
+
+
+
+knitr::include_graphics('images/training_results.png')
+
+
+```
+
+
 
 ---
 
