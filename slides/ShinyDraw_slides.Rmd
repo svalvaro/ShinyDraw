@@ -1,8 +1,7 @@
 ---
 title: "Shiny & Computer Vision"
-subtitle: "⚔<br/>with some Python"
+subtitle: "⚔<br/>(and Python)"
 author: "Alvaro Sanchez-Villalba"
-institute: "Institute of Molecular Genetics, Prague."
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -43,15 +42,11 @@ remotes::install_github("svalvaro/ShinyDraw")
 
 --
 
-Or just access to https://svalvaro.shinyapps.io/ShinyDraw/ 
+Access to https://svalvaro.shinyapps.io/ShinyDraw/
+(Fix deployment)
 
 
 
----
-background-image: url(https://i.ytimg.com/vi/Zdf7Afgfq8Q/maxresdefault.jpg)
-background-position: 60% 60%
-background-size: 100%
-class: center, bottom, inverse
 
 
 
