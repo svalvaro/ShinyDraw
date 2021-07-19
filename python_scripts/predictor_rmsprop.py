@@ -1,12 +1,9 @@
 from tensorflow.keras.models import load_model
 import numpy as np
-import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import img_to_array
-from keras.preprocessing import image
 import image
 import os
 from PIL import Image
-import matplotlib.pyplot as plt
 import PIL.ImageOps
 import warnings
 import logging 
@@ -31,7 +28,7 @@ model = load_model('../ShinyDraw/python_scripts/model_rmsprop/')
 
 imageList = []
 
-path = '../ShinyDraw/www/pictures_to_predict/'
+path = '../ShinyDraw/www/'
 
 size = 28,28
 
