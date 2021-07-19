@@ -3,6 +3,9 @@ library(reticulate)
 library(ggplot2)
 library(shinydashboard)
 
+
+
+
 ui <- dashboardPage(
 
     dashboardHeader(title = 'Shiny Draw & Predict'),
@@ -49,6 +52,11 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
+
+
+    virtualenv_dir = Sys.getenv('VIRTUALENV_NAME')
+
+
     vals = reactiveValues(x=NULL, y=NULL)
     draw = reactiveVal(FALSE)
     observeEvent(input$click, handlerExpr = {
@@ -86,7 +94,7 @@ server <- function(input, output, session) {
 
     observeEvent(input$predict, {
 
-        outfile <- './www/pictures_to_predict/plotw.png'
+        outfile <- 'www/plotw.png'
         #outfile <- tempfile(fileext = 'to_predict_plot.png')
 
         png(outfile, width = 280, height = 280)
@@ -109,7 +117,7 @@ server <- function(input, output, session) {
              width = 280,
              height = 280)
 
-        number_plots$Plots    <- length(list.files('../ShinyDraw/www/pictures_to_predict/'))
+        number_plots$Plots    <- length(list.files('../ShinyDraw/www/'))
 
 
 
@@ -207,7 +215,7 @@ server <- function(input, output, session) {
 
     session$onSessionEnded(function() {
         cat("Session Ended\n")
-        unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
+        #unlink('../ShinyDraw/www/pictures_to_predict/plotw.png')
     })
 
 
